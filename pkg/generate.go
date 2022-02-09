@@ -354,7 +354,7 @@ func (pl2 *PL2) generateRGBTransforms() {
 		gg := float64(g) * float64(g)
 		bb := float64(b) * float64(b)
 
-		m := math.Sqrt(rr + gg + bb)
+		m := math.Sqrt(rr + gg + bb) / math.MaxUint8
 
 		pl2.RedTones[palIdx] = uint8(pl2.BasePalette.Index(fn(m, 0, 0)))
 		pl2.GreenTones[palIdx] = uint8(pl2.BasePalette.Index(fn(0, m, 0)))
