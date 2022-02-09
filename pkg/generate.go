@@ -2,28 +2,40 @@ package pkg
 
 import (
 	"image/color"
+	"fmt"
 	"math"
 
 	color2 "github.com/lucasb-eyer/go-colorful"
 )
 
 func (pl2 *PL2) regenerate() {
+	fmt.Print("> SetMainPalette\n")
 	pl2.SetMainPalette(pl2.BasePalette)
+	fmt.Print("> SetTextPalette\n")
 	pl2.SetTextPalette(pl2.TextColors)
+	fmt.Print("> generateTransforms\n")
 	pl2.generateTransforms()
+	fmt.Print("> generateTextColorTransforms\n")
 	pl2.generateTextColorTransforms()
 }
 
 func (pl2 *PL2) generateTransforms() {
+	fmt.Print("---- generateLightingTransforms\n")
 	pl2.generateLightingTransforms()
+	fmt.Print("---- generateBlendModeTransforms\n")
 	pl2.generateBlendModeTransforms()
+	fmt.Print("---- generateColorVariationTransforms\n")
 	pl2.generateColorVariationTransforms()
+	fmt.Print("---- generateOtherTransforms\n")
 	pl2.generateOtherTransforms()
 }
 
 func (pl2 *PL2) generateLightingTransforms() {
+	fmt.Print("---- generateLightLevelVariations\n")
 	pl2.generateLightLevelVariations()
+	fmt.Print("---- generateInvColorVariations\n")
 	pl2.generateInvColorVariations()
+	fmt.Print("---- generateSelectedUnitTransforms\n")
 	pl2.generateSelectedUnitTransforms()
 }
 
@@ -460,12 +472,13 @@ func (pl2 *PL2) generateTextColorTransforms() {
 		ar, ag, ab, _ := a.RGBA()
 		br, _, _, _ := b.RGBA()
 
-		intensity := int(br)
+		intensity := int(br / math.MaxUint8)
 
 		return color.RGBA{
-			R: uint8((int(ar) * intensity) / math.MaxUint8),
-			G: uint8((int(ag) * intensity) / math.MaxUint8),
-			B: uint8((int(ab) * intensity) / math.MaxUint8),
+			R: uint8((int(ar / math.MaxUint8) * intensity) / math.MaxUint8),
+			G: uint8((int(ag / math.MaxUint8) * intensity) / math.MaxUint8),
+			B: uint8((int(ab / math.MaxUint8) * intensity) / math.MaxUint8),
+			A: uint8(math.MaxUint8),
 		}
 	}
 
