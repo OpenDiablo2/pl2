@@ -153,7 +153,7 @@ func (pl2 *PL2) generateMultiplicativeTransforms() {
 	pl2.MultiplicativeBlend = make([]Transform, multiplyBlends)
 
 	fn := func(src, dst uint8) uint8 {
-		return uint8(math.Sqrt(float64(src)) * math.Sqrt(float64(dst)))
+		return uint8((float64(src) * float64(dst)) / math.MaxUint8)
 	}
 
 	for _ = range pl2.MultiplicativeBlend {
@@ -342,7 +342,7 @@ func (pl2 *PL2) generateRGBTransforms() {
 		gg := float64(g) * float64(g)
 		bb := float64(b) * float64(b)
 
-		m := math.Sqrt(rr + gg + bb)
+		m := math.Sqrt(rr + gg + bb) / math.MaxUint8
 
 		pl2.RedTones[palIdx] = uint8(pl2.BasePalette.Index(fn(m, 0, 0)))
 		pl2.GreenTones[palIdx] = uint8(pl2.BasePalette.Index(fn(0, m, 0)))
@@ -460,12 +460,13 @@ func (pl2 *PL2) generateTextColorTransforms() {
 		ar, ag, ab, _ := a.RGBA()
 		br, _, _, _ := b.RGBA()
 
-		intensity := int(br)
+		intensity := int(br / math.MaxUint8)
 
 		return color.RGBA{
-			R: uint8((int(ar) * intensity) / math.MaxUint8),
-			G: uint8((int(ag) * intensity) / math.MaxUint8),
-			B: uint8((int(ab) * intensity) / math.MaxUint8),
+			R: uint8((int(ar / math.MaxUint8) * intensity) / math.MaxUint8),
+			G: uint8((int(ag / math.MaxUint8) * intensity) / math.MaxUint8),
+			B: uint8((int(ab / math.MaxUint8) * intensity) / math.MaxUint8),
+			A: uint8(math.MaxUint8),
 		}
 	}
 

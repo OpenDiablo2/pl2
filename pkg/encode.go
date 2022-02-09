@@ -22,12 +22,18 @@ func (pl2 *PL2) Encode(w io.Writer) error {
 	return pl2.encodeTextColorTransforms(w)
 }
 
-func (pl2 *PL2) encodeColors(w io.Writer, src color.Palette) error {
+func (pl2 *PL2) encodeColors(w io.Writer, src color.Palette, colorBytes int) error {
 	for idx := range src {
 		r, g, b, _ := src[idx].RGBA()
 
-		if _, err := w.Write([]byte{byte(r), byte(g), byte(b), 0}); err != nil {
-			return fmt.Errorf("could not encode colors, %w", err)
+		if colorBytes == 3 {
+			if _, err := w.Write([]byte{byte(r), byte(g), byte(b)}); err != nil {
+				return fmt.Errorf("could not encode colors, %w", err)
+			}
+		} else {
+			if _, err := w.Write([]byte{byte(r), byte(g), byte(b), 0}); err != nil {
+				return fmt.Errorf("could not encode colors, %w", err)
+			}
 		}
 	}
 
@@ -37,13 +43,13 @@ func (pl2 *PL2) encodeColors(w io.Writer, src color.Palette) error {
 func (pl2 *PL2) encodeBasePalette(w io.Writer) error {
 	pl2.SetMainPalette(pl2.BasePalette) // if nil, generates default
 
-	return pl2.encodeColors(w, pl2.BasePalette)
+	return pl2.encodeColors(w, pl2.BasePalette, 4)
 }
 
 func (pl2 *PL2) encodeTextColors(w io.Writer) error {
 	pl2.SetTextPalette(pl2.TextColors) // if nil, generates default
 
-	return pl2.encodeColors(w, pl2.TextColors)
+	return pl2.encodeColors(w, pl2.TextColors, 3)
 }
 
 func (pl2 *PL2) encodeTransforms(w io.Writer) (err error) {
