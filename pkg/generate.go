@@ -2,40 +2,28 @@ package pkg
 
 import (
 	"image/color"
-	"fmt"
 	"math"
 
 	color2 "github.com/lucasb-eyer/go-colorful"
 )
 
 func (pl2 *PL2) regenerate() {
-	fmt.Print("> SetMainPalette\n")
 	pl2.SetMainPalette(pl2.BasePalette)
-	fmt.Print("> SetTextPalette\n")
 	pl2.SetTextPalette(pl2.TextColors)
-	fmt.Print("> generateTransforms\n")
 	pl2.generateTransforms()
-	fmt.Print("> generateTextColorTransforms\n")
 	pl2.generateTextColorTransforms()
 }
 
 func (pl2 *PL2) generateTransforms() {
-	fmt.Print("---- generateLightingTransforms\n")
 	pl2.generateLightingTransforms()
-	fmt.Print("---- generateBlendModeTransforms\n")
 	pl2.generateBlendModeTransforms()
-	fmt.Print("---- generateColorVariationTransforms\n")
 	pl2.generateColorVariationTransforms()
-	fmt.Print("---- generateOtherTransforms\n")
 	pl2.generateOtherTransforms()
 }
 
 func (pl2 *PL2) generateLightingTransforms() {
-	fmt.Print("---- generateLightLevelVariations\n")
 	pl2.generateLightLevelVariations()
-	fmt.Print("---- generateInvColorVariations\n")
 	pl2.generateInvColorVariations()
-	fmt.Print("---- generateSelectedUnitTransforms\n")
 	pl2.generateSelectedUnitTransforms()
 }
 
@@ -165,7 +153,7 @@ func (pl2 *PL2) generateMultiplicativeTransforms() {
 	pl2.MultiplicativeBlend = make([]Transform, multiplyBlends)
 
 	fn := func(src, dst uint8) uint8 {
-		return uint8(math.Sqrt(float64(src)) * math.Sqrt(float64(dst)))
+		return uint8((float64(src) * float64(dst)) / math.MaxUint8)
 	}
 
 	for _ = range pl2.MultiplicativeBlend {
